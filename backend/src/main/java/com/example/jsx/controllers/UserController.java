@@ -1,66 +1,46 @@
 package com.example.jsx.controllers;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.example.jsx.entities.User;
+import com.example.jsx.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final UserService UserService;
 
-    private UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService UserService) {
+        this.UserService = UserService;
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers(){
-        return userService.getAllUsers().stream().map(u -> new UserResponse(u)).toList();
+    public List<User> getAllUser() {
+        return UserService.getAllUsers();
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody User newUser) {
-        User user = userService.saveOneUser(newUser);
-        if(user != null)
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public User creteUser(@RequestBody User newUser) {
+        return UserService.saveOneUser(newUser);
     }
 
     @GetMapping("/{userId}")
-    public UserResponse getOneUser(@PathVariable Long userId) {
-        User user = userService.getOneUserById(userId);
-        if(user == null) {
-            throw new UsernameNotFoundException();
-        }
-        return new UserResponse(user);
+    public User getOneUser(@PathVariable Long userId) {
+        return UserService.getOneUser(userId);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<Void> updateOneUser(@PathVariable Long userId, @RequestBody User newUser) {
-        User user = userService.updateOneUser(userId, newUser);
-        if(user != null)
-            return new ResponseEntity<>(HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public User updateOneUser(@PathVariable Long userId, @RequestBody User newUser) {
+        return UserService.updateOneUser(userId, newUser);
 
     }
-
     @DeleteMapping("/{userId}")
     public void deleteOneUser(@PathVariable Long userId) {
-        userService.deleteById(userId);
-    }
-
-    @GetMapping("/activity/{userId}")
-    public List<Object> getUserActivity(@PathVariable Long userId) {
-        return userService.getUserActivity(userId);
-    }
-
-    @ExceptionHandler(UsernameNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    private void handleUserNotFound() {
-
+        UserService.deleteById(userId);
     }
 }
+
+

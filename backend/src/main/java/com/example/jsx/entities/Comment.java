@@ -17,14 +17,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="posts_id", nullable=false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
     Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="users_id", nullable=false)
+    @JoinColumn(name="user_id", nullable=false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     User user;
@@ -33,6 +32,4 @@ public class Comment {
     @Column(columnDefinition="text")
     String text;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    Date createDate;
 }
